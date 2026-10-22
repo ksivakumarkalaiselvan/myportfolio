@@ -17,3 +17,6 @@ server/.env
 Thumbs.db
 .vscode/
 .idea/
+
+# diagnostics (run with SB_PASS env var, never commit credentials)
+server/scripts/sb-probe.mjs

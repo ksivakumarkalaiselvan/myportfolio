@@ -73,16 +73,35 @@ setInterval(() => {
 }, 60_000).unref();
 
 /* ---------------- API ---------------- */
-app.get('/api/health', async (_req, res) => {
-  let dbOk = false;
-  try {
-    const { getStats } = await import('./db.js');
-    await getStats();
-    dbOk = true;
-  } catch {
-    dbOk = false;
+const dbState = { error: null };
+
+async function ensureDb({ retries = 3, backoffMs = 4000 } = {}) {
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    try {
+      await initDb();
+      dbState.error = null;
+      return true;
+    } catch (err) {
+      dbState.error = String(err && err.message ? err.message : err);
+      console.error(`[db] init attempt ${attempt}/${retries} failed: ${dbState.error}`);
+      const fatal = err && (err.code === '54286' || err.code === '54305'); // auth/config style
+      if (attempt < retries) await new Promise((r) => setTimeout(r, backoffMs * attempt));
+      else if (fatal) return false;
+      else return false;
+    }
   }
-  res.json({ ok: true, db: getDriver(), dbReady: dbOk, uptime: Math.round(process.uptime()) });
+  return false;
+}
+
+app.get('/api/health', (_req, res) => {
+  res.json({
+    ok: true,
+    db: getDriver(),
+    dbReady: getDriver() !== null,
+    dbError: dbState.error,
+    node: process.version,
+    uptime: Math.round(process.uptime())
+  });
 });
 
 app.use('/api/auth', authRouter);
@@ -125,14 +144,33 @@ async function shutdown(signal) {
 ['SIGTERM', 'SIGINT'].forEach((sig) => process.on(sig, () => shutdown(sig)));
 
 /* ---------------- boot ---------------- */
-initDb()
-  .then(() => {
-    app.listen(PORT, HOST, () => {
-      console.log(`[server] K. Sivakumar portfolio API listening on http://${HOST}:${PORT}`);
-      console.log(`[server] serving site from ${SITE_DIR}`);
-    });
-  })
-  .catch((err) => {
-    console.error('[fatal] database initialisation failed:', err);
-    process.exit(1);
+console.log(`[server] node ${process.version} starting…`);
+
+(async () => {
+  let dbReady = await ensureDb();
+  if (!dbReady) {
+    const wanted = process.env.DATABASE_URL
+      ? 'PostgreSQL (DATABASE_URL)'
+      : process.env.MONGODB_URI
+        ? 'MongoDB (MONGODB_URI)'
+        : 'SQLite';
+    console.error(`[db] FATAL: could not initialise the ${wanted} database.`);
+    console.error('[db] The site will still come up (SQLite fallback candidate), but check the logs.');
+    // Keep running so the site stays online and /api/health can report the error.
+  }
+
+  app.listen(PORT, HOST, () => {
+    console.log(`[server] K. Sivakumar portfolio API listening on http://${HOST}:${PORT}`);
+    console.log(`[server] serving site from ${SITE_DIR} | node ${process.version} | driver ${getDriver() || '(none)'}`);
   });
+
+  // Reconnect in the background if the first pass failed (e.g. transient pooler warm-up).
+  const reconnectTimer = setInterval(async () => {
+    if (getDriver()) return;
+    console.error('[server] retrying database connection…');
+    const ok = await ensureDb({ retries: 1 });
+    if (ok) clearInterval(reconnectTimer);
+  }, 60_000);
+
+  process.on('exit', () => { clearInterval(reconnectTimer); });
+})();
