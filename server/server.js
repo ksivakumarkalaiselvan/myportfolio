@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { initDb, getDriver } from './db.js';
+import { initDb, getDriver, closeDb } from './db.js';
 import authRouter from './routes/auth.routes.js';
 import messagesRouter from './routes/messages.routes.js';
 
@@ -111,6 +111,18 @@ app.use((err, _req, res, _next) => {
   console.error('[error]', err);
   res.status(500).json({ error: 'server_error', message: 'Something went wrong on our side.' });
 });
+
+/* ---------------- graceful shutdown (Render sends SIGTERM on redeploys) ---------------- */
+async function shutdown(signal) {
+  console.log(`[server] ${signal} received — closing down`);
+  try {
+    await closeDb();
+  } catch (err) {
+    console.error('[server] error while closing the database:', err);
+  }
+  process.exit(0);
+}
+['SIGTERM', 'SIGINT'].forEach((sig) => process.on(sig, () => shutdown(sig)));
 
 /* ---------------- boot ---------------- */
 initDb()

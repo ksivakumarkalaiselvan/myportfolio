@@ -78,30 +78,36 @@ create a free account at <https://render.com>, then either:
 This uses a **persistent disk** for the SQLite file, so submissions survive
 redeploys. Disks require a paid instance (Starter, $7/mo).
 
-### Option B — free tier (ephemeral filesystem)
+### Option B — free tier + Supabase PostgreSQL (recommended)
 
-Render's free instances lose local files on every restart, so swap SQLite for
-MongoDB Atlas (free M0 cluster, forever):
+Render's free instances lose local files on every restart, so SQLite would
+wipe your messages. Point the backend at a **free Supabase Postgres database**
+instead — the backend detects `DATABASE_URL` and switches automatically:
 
-1. Create a free cluster at <https://cloud.mongodb.com>, get the connection
-   string, and whitelist `0.0.0.0/0` in Network Access.
-2. In Render: **New → Web Service**, point at the repo, then set:
+1. Sign up at <https://supabase.com> → **New project** → pick a region near you
+   (Singapore/Mumbai) → set a database password (save it!).
+2. **Project Settings → Database → Connection string → URI** and copy the
+   **Session pooler** string (port `5432`, host `aws-0-...pooler.supabase.com`).
+   It looks like: `postgres://postgres.xxxx:YOUR-DB-PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres`
+   – replace `YOUR-DB-PASSWORD` with the password you saved.
+3. In Render: **New → Web Service** (or Blueprint — `render.yaml` already asks
+   for the right keys), point at the repo, and fill the prompts:
    | Key | Value |
    |---|---|
-   | Runtime | Node |
    | Build command | `npm install --prefix server --omit=dev` |
    | Start command | `node server/server.js` |
-   | `NODE_VERSION` | `24.x` |
-   | `MONGODB_URI` | `mongodb+srv://…` (from Atlas) |
-   | `MONGODB_DB` | `portfolio` |
-   | `ADMIN_USER` / `ADMIN_PASSWORD` | your credentials |
-   | `SESSION_SECRET` | long random string |
+   | `DATABASE_URL` | the Supabase session-pooler string |
+   | `ADMIN_USER` / `ADMIN_PASSWORD` | your admin credentials |
+   | `SESSION_SECRET` | leave to Render (generated) |
 
-   Delete the `disk:` block from `render.yaml` if you use the blueprint route
-   with this option.
+No tables to create — the backend creates the `messages` table on first boot.
 
-The storage layer switches automatically: if `MONGODB_URI` is set it uses
-Mongo, otherwise it uses SQLite at `DB_PATH`.
+Note: free Supabase projects pause after ~1 week of no database activity;
+an email from Supabase restores them with one click. Portal logins and
+contact messages count as activity.
+
+*(MongoDB Atlas also still works — set `MONGODB_URI` instead and remove
+`DATABASE_URL`.)*
 
 ---
 
@@ -115,7 +121,8 @@ Mongo, otherwise it uses SQLite at `DB_PATH`.
 | `SESSION_SECRET` | dev fallback | HMAC key for session tokens — **change** |
 | `SESSION_TTL_MS` | `28800000` | Session lifetime (8 h) |
 | `DB_PATH` | `./data/portfolio.db` | SQLite file location |
-| `MONGODB_URI` | – | Set to use Atlas instead of SQLite |
+| `DATABASE_URL` | – | Supabase Postgres connection string (top priority when set) |
+| `MONGODB_URI` | – | Atlas connection string (used if `DATABASE_URL` is unset) |
 | `MONGODB_DB` | `portfolio` | Mongo database name |
 | `ALLOWED_ORIGINS` | localhost dev ports | Extra CORS origins (production needs none) |
 | `SITE_DIR` | repo root | Where `index.html` is served from |

@@ -31,11 +31,10 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-      # mongodb+srv://<user>:<pass>@<cluster>.mongodb.net  (from Atlas, free M0)
-      - key: MONGODB_URI
+      # Supabase PostgreSQL connection string (Project Settings > Database):
+      # postgres://postgres.xxxx:[password]@aws-0-region.pooler.supabase.com:5432/postgres
+      - key: DATABASE_URL
         sync: false
-      - key: MONGODB_DB
-        value: portfolio
       # Extra CORS origins — same-origin deploys need none.
       - key: ALLOWED_ORIGINS
         sync: false
