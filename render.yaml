@@ -1,0 +1,41 @@
+# Render blueprint — free tier.
+#
+# Render's free instances have an ephemeral filesystem, so SQLite would reset
+# on every restart. The backend detects MONGODB_URI and uses MongoDB Atlas
+# (free M0 cluster) automatically. If you leave MONGODB_URI blank the deploy
+# still works, but messages are lost whenever the service restarts.
+#
+# Deploy with:  Render dashboard > New > Blueprint > pick this repo.
+
+services:
+  - type: web
+    name: sivakumar-portfolio
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm install --prefix server --omit=dev
+    startCommand: node server/server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 24.x
+      - key: NODE_ENV
+        value: production
+      # HMAC key used to sign admin session tokens — Render generates a random one.
+      - key: SESSION_SECRET
+        generateValue: true
+      # Fill these in when Render prompts you.
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # mongodb+srv://<user>:<pass>@<cluster>.mongodb.net  (from Atlas, free M0)
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: portfolio
+      # Extra CORS origins — same-origin deploys need none.
+      - key: ALLOWED_ORIGINS
+        sync: false

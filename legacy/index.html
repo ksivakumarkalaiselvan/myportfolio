@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | Full Stack Developer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Scroll to Top -->
+  <button id="scrollTop" aria-label="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">&lt;Portfolio/&gt;</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero" class="active">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#certifications">Certifications</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="hero-greeting">Hello, I'm</p>
+        <h1 class="hero-name">Siva Kumar</h1>
+        <h2 class="hero-title"><span id="typed-text"></span><span class="cursor">|</span></h2>
+        <p class="hero-desc">Passionate Full Stack Developer and AI enthusiast, crafting modern web experiences with clean code and creative design.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn btn-primary"><i class="fas fa-download"></i> Download Resume</a>
+          <a href="#contact" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Contact Me</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="img-placeholder hero-img-box">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title">About <span>Me</span></h2>
+      <p class="section-subtitle">Get to know me better</p>
+      <div class="about-grid">
+        <div class="about-img">
+          <div class="img-placeholder large">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+        <div class="about-text">
+          <p>I'm a passionate Full Stack Developer with expertise in building modern, responsive web applications. I love turning complex problems into simple, beautiful, and intuitive solutions.</p>
+          <div class="about-details">
+            <div class="detail"><span>Education:</span> B.Tech in Computer Science</div>
+            <div class="detail"><span>Career Objective:</span> To leverage my skills in a dynamic tech environment</div>
+            <div class="detail"><span>Email:</span> siva@example.com</div>
+            <div class="detail"><span>Phone:</span> +91 98765 43210</div>
+            <div class="detail"><span>Location:</span> India</div>
+            <div class="detail"><span>Languages:</span> English, Telugu, Hindi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Skills</span></h2>
+      <p class="section-subtitle">Technologies I work with</p>
+      <div class="skills-grid">
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-html5" style="color:#E34F26"></i></div>
+          <div class="skill-info">
+            <span>HTML</span>
+            <span class="skill-percent">90%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="90"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-css3-alt" style="color:#1572B6"></i></div>
+          <div class="skill-info">
+            <span>CSS</span>
+            <span class="skill-percent">85%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="85"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-js" style="color:#F7DF1E"></i></div>
+          <div class="skill-info">
+            <span>JavaScript</span>
+            <span class="skill-percent">80%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="80"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-python" style="color:#3776AB"></i></div>
+          <div class="skill-info">
+            <span>Python</span>
+            <span class="skill-percent">85%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="85"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fas fa-code" style="color:#A8B9CC"></i></div>
+          <div class="skill-info">
+            <span>C</span>
+            <span class="skill-percent">75%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="75"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-java" style="color:#ED8B00"></i></div>
+          <div class="skill-info">
+            <span>Java</span>
+            <span class="skill-percent">70%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="70"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fas fa-database" style="color:#4479A1"></i></div>
+          <div class="skill-info">
+            <span>MySQL</span>
+            <span class="skill-percent">80%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="80"></div></div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon"><i class="fab fa-git-alt" style="color:#F05032"></i></div>
+          <div class="skill-info">
+            <span>Git</span>
+            <span class="skill-percent">85%</span>
+          </div>
+          <div class="progress-bar"><div class="progress" data-width="85"></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Projects</span></h2>
+      <p class="section-subtitle">What I've built</p>
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <div class="project-img"><i class="fas fa-university"></i></div>
+          <div class="project-body">
+            <h3>Student Grievance Management</h3>
+            <p>A web platform for students to submit and track grievances with admin dashboard.</p>
+            <div class="project-tech"><span>HTML</span><span>CSS</span><span>JS</span><span>PHP</span></div>
+            <div class="project-btns">
+              <a href="#" class="btn-small"><i class="fab fa-github"></i> Code</a>
+              <a href="#" class="btn-small outline"><i class="fas fa-external-link-alt"></i> Live</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-img"><i class="fas fa-robot"></i></div>
+          <div class="project-body">
+            <h3>AI Chatbot</h3>
+            <p>An intelligent chatbot built using NLP techniques to answer user queries.</p>
+            <div class="project-tech"><span>Python</span><span>NLP</span><span>Flask</span></div>
+            <div class="project-btns">
+              <a href="#" class="btn-small"><i class="fab fa-github"></i> Code</a>
+              <a href="#" class="btn-small outline"><i class="fas fa-external-link-alt"></i> Live</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-img"><i class="fas fa-globe"></i></div>
+          <div class="project-body">
+            <h3>Portfolio Website</h3>
+            <p>Modern responsive portfolio showcasing skills, projects, and experience.</p>
+            <div class="project-tech"><span>HTML</span><span>CSS</span><span>JS</span></div>
+            <div class="project-btns">
+              <a href="#" class="btn-small"><i class="fab fa-github"></i> Code</a>
+              <a href="#" class="btn-small outline"><i class="fas fa-external-link-alt"></i> Live</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-img"><i class="fas fa-cloud-sun"></i></div>
+          <div class="project-body">
+            <h3>Weather App</h3>
+            <p>Real-time weather app with 7-day forecast using OpenWeather API.</p>
+            <div class="project-tech"><span>HTML</span><span>CSS</span><span>JS</span><span>API</span></div>
+            <div class="project-btns">
+              <a href="#" class="btn-small"><i class="fab fa-github"></i> Code</a>
+              <a href="#" class="btn-small outline"><i class="fas fa-external-link-alt"></i> Live</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications Section -->
+  <section id="certifications" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Certifications</span></h2>
+      <p class="section-subtitle">Professional certifications earned</p>
+      <div class="certs-grid">
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+          <h3>Full Stack Development</h3>
+          <p>Udemy</p>
+          <span class="cert-date">2025</span>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+          <h3>Python for Data Science</h3>
+          <p>NPTEL</p>
+          <span class="cert-date">2024</span>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+          <h3>AI & Machine Learning</h3>
+          <p>Coursera</p>
+          <span class="cert-date">2024</span>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+          <h3>Web Development Bootcamp</h3>
+          <p>freeCodeCamp</p>
+          <span class="cert-date">2023</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Experience</span></h2>
+      <p class="section-subtitle">Professional journey so far</p>
+      <div class="exp-grid">
+
+        <div class="exp-card">
+          <div class="exp-icon"><i class="fas fa-briefcase"></i></div>
+          <div class="exp-body">
+            <h3>Web Development Intern</h3>
+            <p class="exp-org">Tech Solutions Inc.</p>
+            <p class="exp-desc">Built responsive web pages and contributed to client projects.</p>
+            <span class="exp-date">Jun 2025 - Aug 2025</span>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon"><i class="fas fa-users"></i></div>
+          <div class="exp-body">
+            <h3>AI Workshop</h3>
+            <p class="exp-org">ML Academy</p>
+            <p class="exp-desc">Hands-on workshop on building machine learning models with Python.</p>
+            <span class="exp-date">Mar 2025</span>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon"><i class="fas fa-trophy"></i></div>
+          <div class="exp-body">
+            <h3>Hackathon Participant</h3>
+            <p class="exp-org">CodeFest 2025</p>
+            <p class="exp-desc">Built a real-time collaboration tool in 48 hours. Won 2nd place.</p>
+            <span class="exp-date">Jan 2025</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="exp-stats">
+        <div class="stat">
+          <span class="stat-num" data-target="3">0</span>
+          <span class="stat-label">Internships</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-target="5">0</span>
+          <span class="stat-label">Workshops</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-target="4">0</span>
+          <span class="stat-label">Hackathons</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Services</span></h2>
+      <p class="section-subtitle">What I can do for you</p>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-code"></i></div>
+          <h3>Web Development</h3>
+          <p>Modern, responsive websites and web applications using latest technologies.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
+          <h3>UI/UX Design</h3>
+          <p>Clean and user-friendly interfaces with focus on user experience.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-brain"></i></div>
+          <h3>AI Projects</h3>
+          <p>AI-powered solutions including chatbots, prediction models, and automation.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section id="achievements" class="section">
+    <div class="container">
+      <h2 class="section-title">My <span>Achievements</span></h2>
+      <p class="section-subtitle">Milestones and recognition</p>
+      <div class="achievements-grid">
+
+        <div class="achievement-card">
+          <div class="achievement-icon"><i class="fas fa-medal"></i></div>
+          <h3>Best Project Award</h3>
+          <p>Won best project award for Student Grievance System at college tech fest.</p>
+        </div>
+
+        <div class="achievement-card">
+          <div class="achievement-icon"><i class="fas fa-code"></i></div>
+          <h3>Coding Contest Finalist</h3>
+          <p>Finalist in regional coding competition among 500+ participants.</p>
+        </div>
+
+        <div class="achievement-card">
+          <div class="achievement-icon"><i class="fas fa-graduation-cap"></i></div>
+          <h3>Academic Excellence</h3>
+          <p>Top 5% in Computer Science department with 8.9 CGPA.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="container">
+      <h2 class="section-title">Get In <span>Touch</span></h2>
+      <p class="section-subtitle">Have a project? Let's talk</p>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <div><h4>Email</h4><p>siva@example.com</p></div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div><h4>Phone</h4><p>+91 98765 43210</p></div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div><h4>Location</h4><p>India</p></div>
+          </div>
+          <div class="map-placeholder">
+            <i class="fas fa-map-marked-alt"></i>
+            <p>Google Maps Placeholder</p>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <input type="text" placeholder="Subject">
+          <textarea rows="5" placeholder="Your Message" required></textarea>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">&lt;Portfolio/&gt;</div>
+        <div class="footer-social">
+          <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p class="footer-text">&copy; 2025 Siva Kumar. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

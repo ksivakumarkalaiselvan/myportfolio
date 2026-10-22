@@ -1,0 +1,20 @@
+{
+  "name": "sivakumar-portfolio-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend for the K. Sivakumar portfolio — contact submissions + admin portal API",
+  "main": "server.js",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "smoke": "node scripts/smoke.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongodb": "^6.12.0"
+  }
+}

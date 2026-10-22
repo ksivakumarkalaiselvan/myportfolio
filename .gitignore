@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+server/node_modules/
+
+# local database
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# secrets
+.env
+server/.env
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
