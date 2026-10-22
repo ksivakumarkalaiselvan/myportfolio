@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { initDb, getDriver, closeDb } from './db.js';
 import authRouter from './routes/auth.routes.js';
 import messagesRouter from './routes/messages.routes.js';
+import notificationsRouter from './routes/notifications.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SITE_DIR = process.env.SITE_DIR || path.join(__dirname, '..');
@@ -106,6 +107,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/notifications', notificationsRouter);
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
 

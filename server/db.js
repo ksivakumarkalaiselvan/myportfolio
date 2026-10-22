@@ -18,6 +18,7 @@ const PG_URI = process.env.DATABASE_URL || ''; // Supabase PostgreSQL
 let driver = null;
 let sqlite = null;
 let mongoCollection = null;
+let notifCollectionRef = null;
 let pgPool = null;
 
 export const getDriver = () => driver;
@@ -45,6 +46,17 @@ export async function initDb() {
       );
     `);
     await pgPool.query('CREATE INDEX IF NOT EXISTS messages_created_at_idx ON messages (created_at DESC)');
+    await pgPool.query(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        title      TEXT        NOT NULL,
+        body       TEXT,
+        type       TEXT        NOT NULL DEFAULT 'update',
+        active     BOOLEAN     NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+    `);
+    await pgPool.query('CREATE INDEX IF NOT EXISTS notifications_created_at_idx ON notifications (created_at DESC)');
     driver = 'postgres';
     const host = new URL(PG_URI).host;
     console.log('[db] PostgreSQL driver active ->', host);
@@ -59,6 +71,9 @@ export async function initDb() {
     mongoCollection = db.collection('messages');
     await mongoCollection.createIndex({ createdAt: -1 });
     await mongoCollection.createIndex({ read: 1 });
+    const notifCollection = db.collection('notifications');
+    await notifCollection.createIndex({ createdAt: -1 });
+    notifCollectionRef = notifCollection;
     driver = 'mongo';
     console.log('[db] MongoDB driver active ->', mongoCollection.namespace);
     return;
@@ -77,6 +92,16 @@ export async function initDb() {
       subject    TEXT,
       body       TEXT    NOT NULL,
       read       INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+    );
+  `);
+  sqlite.exec(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      title      TEXT    NOT NULL,
+      body       TEXT,
+      type       TEXT    NOT NULL DEFAULT 'update',
+      active     INTEGER NOT NULL DEFAULT 1,
       created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
     );
   `);
@@ -220,4 +245,111 @@ export async function getStats() {
 /** Graceful shutdown so pooled connections do not hang the process. */
 export async function closeDb() {
   if (pgPool) await pgPool.end();
+}
+
+/* ============================================================
+   NOTIFICATIONS (site announcement ticker managed from the admin portal)
+   ============================================================ */
+
+export async function insertNotification({ title, body, type }) {
+  const allowed = new Set(['update', 'event', 'alert']);
+  const kind = allowed.has(type) ? type : 'update';
+
+  if (driver === 'postgres') {
+    const res = await pgPool.query(
+      `INSERT INTO notifications (title, body, type)
+       VALUES ($1, $2, $3)
+       RETURNING id::text AS id, created_at`,
+      [title, body || '', kind]
+    );
+    return { id: res.rows[0].id, title, body: body || '', type: kind, active: true, createdAt: toIso(res.rows[0].created_at) };
+  }
+  if (driver === 'mongo') {
+    const doc = { title, body: body || '', type: kind, active: true, createdAt: new Date() };
+    const res = await notifCollectionRef.insertOne(doc);
+    return { id: String(res.insertedId), ...doc, createdAt: doc.createdAt.toISOString() };
+  }
+  const info = sqlite
+    .prepare('INSERT INTO notifications (title, body, type) VALUES (?, ?, ?)')
+    .run(title, body || '', kind);
+  return { id: String(info.lastInsertRowid), title, body: body || '', type: kind, active: true };
+}
+
+export async function listNotifications({ activeOnly = false, limit = 20 } = {}) {
+  const max = Math.min(Number(limit) || 20, 100);
+
+  if (driver === 'postgres') {
+    const res = await pgPool.query(
+      `SELECT id::text AS id, title, body, type, active, created_at
+       FROM notifications ${activeOnly ? 'WHERE active = TRUE' : ''}
+       ORDER BY id DESC LIMIT $1`,
+      [max]
+    );
+    return res.rows.map((r) => ({
+      id: r.id, title: r.title, body: r.body || '', type: r.type,
+      active: !!r.active, createdAt: toIso(r.created_at)
+    }));
+  }
+  if (driver === 'mongo') {
+    const filter = activeOnly ? { active: true } : {};
+    const rows = await notifCollectionRef
+      .find(filter, { projection: { _id: 0 } })
+      .sort({ createdAt: -1 })
+      .limit(max)
+      .toArray();
+    return rows.map((r) => ({
+      id: String(r._id), title: r.title, body: r.body || '', type: r.type,
+      active: !!r.active, createdAt: new Date(r.createdAt).toISOString()
+    }));
+  }
+  const rows = sqlite
+    .prepare(`SELECT * FROM notifications ${activeOnly ? 'WHERE active = 1' : ''} ORDER BY id DESC LIMIT ?`)
+    .all(max);
+  return rows.map((r) => ({
+    id: String(r.id), title: r.title, body: r.body || '', type: r.type,
+    active: !!r.active, createdAt: toIso(r.created_at)
+  }));
+}
+
+export async function deleteNotification(id) {
+  if (driver === 'postgres') {
+    const numeric = Number(id);
+    if (!Number.isSafeInteger(numeric) || numeric <= 0) return false;
+    const res = await pgPool.query('DELETE FROM notifications WHERE id = $1', [numeric]);
+    return res.rowCount > 0;
+  }
+  if (driver === 'mongo') {
+    const { ObjectId } = await import('mongodb');
+    let objectId;
+    try { objectId = new ObjectId(String(id)); } catch { return false; }
+    const res = await notifCollectionRef.deleteOne({ _id: objectId });
+    return res.deletedCount > 0;
+  }
+  const info = sqlite.prepare('DELETE FROM notifications WHERE id = ?').run(Number(id));
+  return info.changes > 0;
+}
+
+export async function toggleNotification(id, active) {
+  if (driver === 'postgres') {
+    const numeric = Number(id);
+    if (!Number.isSafeInteger(numeric) || numeric <= 0) return null;
+    const res = await pgPool.query(
+      'UPDATE notifications SET active = $1 WHERE id = $2 RETURNING active',
+      [!!active, numeric]
+    );
+    return res.rowCount ? !!res.rows[0].active : null;
+  }
+  if (driver === 'mongo') {
+    const { ObjectId } = await import('mongodb');
+    let objectId;
+    try { objectId = new ObjectId(String(id)); } catch { return null; }
+    const res = await notifCollectionRef.findOneAndUpdate(
+      { _id: objectId }, { $set: { active: !!active } }, { returnDocument: 'after' }
+    );
+    return res ? !!res.active : null;
+  }
+  const info = sqlite
+    .prepare('UPDATE notifications SET active = ? WHERE id = ?')
+    .run(active ? 1 : 0, Number(id));
+  return info.changes ? !!active : null;
 }

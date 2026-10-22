@@ -745,6 +745,153 @@
   .admin-row:hover { border-color: rgba(99, 102, 241, 0.35); background: rgba(255, 255, 255, 0.045); }
   .admin-row.is-unread { border-left: 2px solid rgba(16, 185, 129, 0.85); }
 
+  /* ---------- Certificates marquee ---------- */
+  .cert-scroller {
+    overflow: hidden;
+    padding: 1.25rem 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  }
+  .cert-track { display: flex; width: max-content; will-change: transform; animation: cert-scroll 64s linear infinite; }
+  .cert-track.is-paused { animation-play-state: paused; }
+  .cert-scroller:hover .cert-track, .cert-scroller:focus-within .cert-track { animation-play-state: paused; }
+  @keyframes cert-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+  .cert-set { display: flex; gap: 1.5rem; padding-right: 1.5rem; }
+
+  .cert-card {
+    flex: none;
+    width: 21rem;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.5rem;
+    background: rgba(18, 18, 22, 0.5);
+    box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: transform 0.45s var(--spring), border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .cert-card:hover {
+    transform: translateY(-7px) scale(1.02);
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      0 0 44px -14px rgba(99, 102, 241, 0.7),
+      0 30px 60px -30px rgba(0, 0, 0, 0.95);
+  }
+  .cert-card img {
+    display: block;
+    width: 100%;
+    height: 14.5rem;
+    object-fit: cover;
+    object-position: top center;
+    background: #101014;
+  }
+  .cert-card figcaption {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+    padding: 0.85rem 1.1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .cert-card figcaption p {
+    font-size: 0.8rem; font-weight: 600;
+    color: #FAFAFA; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cert-card .cert-view { color: #A1A1AA; transition: color 0.25s ease, transform 0.35s var(--spring); }
+  .cert-card:hover .cert-view { color: #A5B4FC; transform: scale(1.15); }
+
+  @media (max-width: 640px) {
+    .cert-card { width: 16rem; }
+    .cert-card img { height: 11rem; }
+    .cert-track { animation-duration: 48s; }
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 80;
+    display: grid; place-items: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(9, 9, 11, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .lightbox.is-open { opacity: 1; pointer-events: auto; }
+  .lightbox figure {
+    margin: 0;
+    max-width: min(1100px, 100%);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 90px -24px rgba(99, 102, 241, 0.75), 0 60px 120px -50px rgba(0, 0, 0, 1);
+    transform: translateY(14px) scale(0.97);
+    transition: transform 0.45s var(--spring), opacity 0.3s ease;
+    opacity: 0;
+    background: #101014;
+  }
+  .lightbox.is-open figure { transform: none; opacity: 1; }
+  .lightbox img { display: block; width: 100%; max-height: min(78vh, 900px); object-fit: contain; }
+  .lightbox figcaption {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0.9rem 1.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.85rem; color: #FAFAFA;
+  }
+  .lightbox-nav {
+    position: absolute; top: 50%; translate: 0 -50%;
+    display: grid; place-items: center;
+    width: 3rem; height: 3rem; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(18, 18, 22, 0.7);
+    color: #FAFAFA;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  }
+  .lightbox-nav:hover { border-color: rgba(99, 102, 241, 0.55); background: rgba(99, 102, 241, 0.16); transform: scale(1.07); }
+  .lightbox-nav.prev { left: clamp(0.5rem, 2vw, 2rem); }
+  .lightbox-nav.next { right: clamp(0.5rem, 2vw, 2rem); }
+
+  /* ---------- Notification bell panel ---------- */
+  .notif-panel {
+    position: absolute; top: calc(100% + 0.75rem); right: 0; z-index: 60;
+    background: rgba(18, 18, 22, 0.86);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 44px -14px rgba(99, 102, 241, 0.65),
+      0 30px 70px -30px rgba(0, 0, 0, 0.95);
+    transform: translateY(6px);
+    opacity: 0;
+    transition: opacity 0.28s ease, transform 0.4s var(--spring);
+  }
+  .notif-panel.is-open { opacity: 1; transform: none; }
+  .notif-item { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1rem; padding: 0.8rem 0.95rem; background: rgba(255, 255, 255, 0.03); }
+  .notif-item .notif-title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: #FAFAFA; font-size: 0.87rem; }
+  .notif-item .notif-type {
+    font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em;
+    border-radius: 999px; padding: 0.2rem 0.55rem; flex: none;
+  }
+  .notif-type-update { color: #A5B4FC; background: rgba(99, 102, 241, 0.14); border: 1px solid rgba(99, 102, 241, 0.3); }
+  .notif-type-event  { color: #6EE7B7; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .notif-type-alert  { color: #FCA5A5; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.35); }
+  .notif-item p.notif-body { margin-top: 0.35rem; font-size: 0.8rem; line-height: 1.55; color: #A1A1AA; }
+  .notif-item time { display: block; margin-top: 0.45rem; font-family: var(--font-mono); font-size: 9px; color: #71717A; }
+
+  .admin-tab {
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #A1A1AA;
+    border: 1px solid transparent;
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  }
+  .admin-tab:hover { color: #E4E4E7; }
+  .admin-tab.is-active {
+    color: #C7D2FE;
+    background: rgba(99, 102, 241, 0.16);
+    border-color: rgba(99, 102, 241, 0.45);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .js .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
@@ -752,6 +899,8 @@
     .hero-media { animation: none; }
     .spin-slow { animation: none; }
     .btn-trail, .btn-glass-border, .btn-resume, .heartbeat, .pulse-text, .title-flow, .particle, .cursor-glow { animation: none !important; }
+    .cert-track { animation: none; }
+    .cert-track { transform: none; }
     .title-flow { background-position: 40% 50%; }
     .admin-panel, .admin-overlay, .admin-row { transition: none !important; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -793,10 +942,24 @@
       <li><a href="#stack" class="nav-link rounded-full px-3 py-2 text-sm font-medium text-ash transition hover:text-alabaster" data-nav>Stack</a></li>
       <li><a href="#projects" class="nav-link rounded-full px-3 py-2 text-sm font-medium text-ash transition hover:text-alabaster" data-nav>Projects</a></li>
       <li><a href="#experience" class="nav-link rounded-full px-3 py-2 text-sm font-medium text-ash transition hover:text-alabaster" data-nav>Experience</a></li>
+      <li><a href="#certificates" class="nav-link rounded-full px-3 py-2 text-sm font-medium text-ash transition hover:text-alabaster" data-nav>Certificates</a></li>
       <li><a href="#contact" class="nav-link rounded-full px-3 py-2 text-sm font-medium text-ash transition hover:text-alabaster" data-nav>Contact</a></li>
     </ul>
 
     <div class="flex items-center gap-2">
+      <div class="relative">
+        <button id="notifToggle" type="button" aria-label="View notifications" aria-expanded="false" aria-controls="notifPanel"
+                class="icon-btn relative grid h-10 w-10 place-items-center rounded-full text-alabaster">
+          <i data-lucide="bell" class="h-[18px] w-[18px]"></i>
+          <span id="notifDot" class="absolute right-2 top-2 hidden h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)]"></span>
+        </button>
+        <div id="notifPanel" class="notif-panel hidden w-[min(22rem,calc(100vw-2rem))] rounded-3xl p-5" aria-label="Notifications">
+          <p class="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">What's new</p>
+          <div id="notifList" class="mt-3 space-y-3">
+            <p class="py-2 text-center text-xs text-zinc-500">No notifications right now.</p>
+          </div>
+        </div>
+      </div>
       <a href="assets/K-Sivakumar-Resume.pdf" download data-resume
          class="btn-resume hidden items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-obsidian sm:inline-flex">
         <i data-lucide="file-down" class="cta-download h-4 w-4"></i> Resume
@@ -815,6 +978,7 @@
       <li><a href="#stack" class="block rounded-2xl px-4 py-3 text-sm font-medium text-ash transition hover:bg-white/5 hover:text-alabaster" data-nav>Stack</a></li>
       <li><a href="#projects" class="block rounded-2xl px-4 py-3 text-sm font-medium text-ash transition hover:bg-white/5 hover:text-alabaster" data-nav>Projects</a></li>
       <li><a href="#experience" class="block rounded-2xl px-4 py-3 text-sm font-medium text-ash transition hover:bg-white/5 hover:text-alabaster" data-nav>Experience</a></li>
+      <li><a href="#certificates" class="block rounded-2xl px-4 py-3 text-sm font-medium text-ash transition hover:bg-white/5 hover:text-alabaster" data-nav>Certificates</a></li>
       <li><a href="#contact" class="block rounded-2xl px-4 py-3 text-sm font-medium text-ash transition hover:bg-white/5 hover:text-alabaster" data-nav>Contact</a></li>
       <li class="mt-1 sm:hidden">
         <a href="assets/K-Sivakumar-Resume.pdf" download data-resume class="flex items-center justify-center gap-2 rounded-2xl bg-alabaster px-4 py-3 text-sm font-semibold text-obsidian">
@@ -1345,6 +1509,35 @@
   </div>
 </section>
 
+<!-- ============================ CERTIFICATES ============================ -->
+<section id="certificates" class="relative px-4 py-20 sm:py-28">
+  <div class="mx-auto max-w-6xl">
+
+    <div class="reveal flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="font-mono text-[11px] uppercase eyebrow text-cyan-300">04 — Certificates</p>
+        <h2 class="mt-4 font-display text-3xl font-extrabold tracking-[-0.03em] text-alabaster sm:text-4xl lg:text-[2.75rem]">
+          Proof of the hours. <span class="text-gradient">All of them.</span>
+        </h2>
+        <p class="mt-3 text-[15px] leading-relaxed text-ash">
+          Hover to pause the reel, click any certificate to read it up close.
+        </p>
+      </div>
+      <span class="chip chip-cyan hidden rounded-full px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-cyan-200 sm:inline-flex">
+        <i data-lucide="mouse-pointer-click" class="mr-2 h-3.5 w-3.5"></i> Click to enlarge
+      </span>
+    </div>
+
+    <div class="reveal mt-12 cert-scroller" aria-label="Certificate gallery, auto-scrolling reel">
+      <div class="cert-track" id="certTrack">
+        <!-- One set of cards; the track holds two copies for a seamless loop. -->
+        <div class="cert-set" data-cert-set></div>
+        <div class="cert-set" data-cert-set aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============================ CONTACT ============================ -->
 <section id="contact" class="relative px-4 py-20 sm:py-28">
   <div class="mx-auto max-w-6xl">
@@ -1355,7 +1548,7 @@
 
       <div class="relative grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div>
-          <p class="font-mono text-[11px] uppercase eyebrow text-indigo-400">04 — Contact</p>
+          <p class="font-mono text-[11px] uppercase eyebrow text-indigo-400">05 — Contact</p>
           <h2 class="mt-4 font-display text-3xl font-extrabold leading-[1.12] tracking-[-0.03em] text-alabaster sm:text-4xl">
             Have an exciting project, hackathon team, or role in mind?
             <span class="text-gradient">Let's build something impactful.</span>
@@ -1417,6 +1610,27 @@
 
 </main>
 
+<!-- Lightbox — click any certificate in the reel to open it here -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Certificate viewer" hidden>
+  <button class="lightbox-nav prev" id="lbPrev" type="button" aria-label="Previous certificate">
+    <i data-lucide="chevron-left" class="h-5 w-5"></i>
+  </button>
+  <figure>
+    <img id="lbImage" src="" alt="" />
+    <figcaption>
+      <p id="lbCaption" class="truncate"></p>
+      <span class="font-mono text-[10px] text-zinc-500" id="lbCounter">1 / 8</span>
+    </figcaption>
+  </figure>
+  <button class="lightbox-nav next" id="lbNext" type="button" aria-label="Next certificate">
+    <i data-lucide="chevron-right" class="h-5 w-5"></i>
+  </button>
+  <button class="icon-btn absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full text-alabaster sm:right-6 sm:top-6"
+          id="lbClose" type="button" aria-label="Close viewer">
+    <i data-lucide="x" class="h-5 w-5"></i>
+  </button>
+</div>
+
 <!-- Admin portal — opened by clicking the footer year 5 times -->
 <div class="admin-overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-labelledby="adminTitle" hidden>
   <div class="admin-panel" id="adminPanel">
@@ -1464,7 +1678,12 @@
 
     <!-- dashboard -->
     <div id="adminDashboard" class="hidden min-h-0 flex-1 flex-col">
-      <div class="grid grid-cols-3 gap-3 px-5 pt-6 sm:px-8">
+      <div class="flex gap-2 border-b border-white/10 px-5 pt-4 sm:px-8">
+        <button id="tabInbox" type="button" class="admin-tab is-active" role="tab" aria-selected="true">Inbox</button>
+        <button id="tabAnnouncements" type="button" class="admin-tab" role="tab" aria-selected="false">Announcements</button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 px-5 pt-5 sm:px-8" id="adminStats">
         <div class="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3.5">
           <p class="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400">Total</p>
           <p class="mt-1 font-display text-2xl font-extrabold text-alabaster" id="statTotal">0</p>
@@ -1479,7 +1698,33 @@
         </div>
       </div>
 
-      <div id="adminList" class="admin-scroll min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-5 sm:px-8"></div>
+      <!-- inbox view -->
+      <div id="viewInbox" class="admin-scroll min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-5 sm:px-8"></div>
+
+      <!-- announcements view -->
+      <div id="viewAnnouncements" class="admin-scroll hidden min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8">
+        <form id="notifCompose" class="rounded-2xl border border-white/8 bg-white/[0.03] p-4" novalidate>
+          <p class="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400">Publish a notification</p>
+          <div class="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
+            <input id="notifTitle" type="text" placeholder="Title — what visitors see first"
+                   class="field w-full rounded-xl px-4 py-2.5 text-sm text-alabaster" maxlength="200" />
+            <select id="notifType" class="field rounded-xl px-3 py-2.5 text-sm text-alabaster" aria-label="Notification type">
+              <option value="update">Update</option>
+              <option value="event">Event</option>
+              <option value="alert">Alert</option>
+            </select>
+          </div>
+          <textarea id="notifBody" rows="3" placeholder="Message body (optional)"
+                    class="field mt-3 w-full rounded-xl px-4 py-2.5 text-sm text-alabaster" maxlength="1000"></textarea>
+          <div class="mt-3 flex items-center justify-between gap-3">
+            <p class="font-mono text-[10px] text-zinc-600">Appears live on the site bell within a minute</p>
+            <button type="submit" class="btn-solid inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white">
+              <i data-lucide="megaphone" class="h-3.5 w-3.5"></i> Publish
+            </button>
+          </div>
+        </form>
+        <div id="notifAdminList" class="mt-4 space-y-3"></div>
+      </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4 sm:px-8">
         <p class="font-mono text-[10px] text-zinc-600" id="adminFooterNote">Signed in</p>
@@ -1556,7 +1801,7 @@
   const adminLoginError = document.getElementById('adminLoginError');
   const adminUser = document.getElementById('adminUser');
   const adminPass = document.getElementById('adminPass');
-  const adminList = document.getElementById('adminList');
+  const adminList = document.getElementById('viewInbox');
   const statTotal = document.getElementById('statTotal');
   const statUnread = document.getElementById('statUnread');
   const statDriver = document.getElementById('statDriver');
@@ -1640,6 +1885,7 @@
     if (adminLoginForm) adminLoginForm.classList.add('hidden');
     if (adminDashboard) adminDashboard.classList.remove('hidden');
     if (adminSubtitle) adminSubtitle.textContent = 'Inbox // live database';
+    if (typeof switchAdminTab === 'function') switchAdminTab('inbox');
   }
 
   function showLogin() {
@@ -1768,8 +2014,166 @@
   }
 
   /* ---------- Admin: refresh / logout ---------- */
+  /* ---------- Tabs: Inbox vs Announcements ---------- */
+  const tabInbox = document.getElementById('tabInbox');
+  const tabAnnouncements = document.getElementById('tabAnnouncements');
+  const viewInbox = document.getElementById('viewInbox');
+  const viewAnnouncements = document.getElementById('viewAnnouncements');
+
+  let adminTab = 'inbox';
+
+  function switchAdminTab(tab) {
+    adminTab = tab;
+    const inboxActive = tab === 'inbox';
+    if (tabInbox) {
+      tabInbox.classList.toggle('is-active', inboxActive);
+      tabInbox.setAttribute('aria-selected', String(inboxActive));
+    }
+    if (tabAnnouncements) {
+      tabAnnouncements.classList.toggle('is-active', !inboxActive);
+      tabAnnouncements.setAttribute('aria-selected', String(!inboxActive));
+    }
+    if (viewInbox) viewInbox.classList.toggle('hidden', !inboxActive);
+    if (viewAnnouncements) viewAnnouncements.classList.toggle('hidden', inboxActive);
+    document.getElementById('adminStats').classList.toggle('hidden', !inboxActive);
+    if (!inboxActive) loadAdminNotifications();
+  }
+
+  if (tabInbox) tabInbox.addEventListener('click', function () { switchAdminTab('inbox'); });
+  if (tabAnnouncements) tabAnnouncements.addEventListener('click', function () { switchAdminTab('announcements'); });
+
+  /* ---------- Announcements: load + render ---------- */
+  async function loadAdminNotifications() {
+    const notifAdminList = document.getElementById('notifAdminList');
+    if (!notifAdminList) return;
+    notifAdminList.innerHTML = '<p class="py-4 text-center font-mono text-xs text-zinc-500">Loading…</p>';
+    try {
+      const data = await api.request('/api/notifications/all', {
+        headers: { Authorization: 'Bearer ' + adminToken }
+      });
+      renderAdminNotifications((data && data.notifications) || []);
+    } catch (err) {
+      if (err.status === 401) { handleAuthExpiry(); }
+      else {
+        notifAdminList.innerHTML = '<p class="py-4 text-center text-sm text-rose-300">Could not load announcements.</p>';
+      }
+    }
+  }
+
+  function renderAdminNotifications(items) {
+    const notifAdminList = document.getElementById('notifAdminList');
+    if (!notifAdminList) return;
+    if (!items.length) {
+      notifAdminList.innerHTML = '<p class="py-6 text-center text-sm text-zinc-500">Nothing published yet. Write one above and it goes live instantly.</p>';
+      return;
+    }
+
+    notifAdminList.innerHTML = items.map(function (n) {
+      return '<article class="admin-row rounded-2xl p-4' + (n.active ? ' is-unread' : '') + '">' +
+        '<div class="flex flex-wrap items-start justify-between gap-3">' +
+          '<div class="min-w-0">' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="notif-type notif-type-' + esc(n.type) + '">' + esc(n.type) + '</span>' +
+              '<p class="truncate text-sm font-semibold text-alabaster">' + esc(n.title) + '</p>' +
+            '</div>' +
+            (n.body ? '<p class="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ash">' + esc(n.body) + '</p>' : '') +
+            '<p class="mt-2 font-mono text-[10px] text-zinc-500">' + esc(formatDate(n.createdAt)) + ' · ' + (n.active ? 'live on site' : 'hidden') + '</p>' +
+          '</div>' +
+          '<div class="flex shrink-0 items-center gap-2">' +
+            '<button type="button" class="btn-ghost inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[11px] font-medium text-ash" data-notif-toggle="' + esc(n.id) + '" data-next="' + (n.active ? 'false' : 'true') + '">' +
+              (n.active ? 'Hide' : 'Show') +
+            '</button>' +
+            '<button type="button" class="icon-btn grid h-8 w-8 place-items-center rounded-full text-ash" data-notif-delete="' + esc(n.id) + '" aria-label="Delete notification: ' + esc(n.title) + '">' +
+              '<svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"/></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+
+    notifAdminList.querySelectorAll('[data-notif-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', async function () {
+        btn.disabled = true;
+        try {
+          await api.request('/api/notifications/' + encodeURIComponent(btn.getAttribute('data-notif-toggle')) + '/active', {
+            method: 'PATCH',
+            headers: { Authorization: 'Bearer ' + adminToken },
+            body: JSON.stringify({ active: btn.getAttribute('data-next') === 'true' })
+          });
+          showToast('Notification updated');
+          await loadAdminNotifications();
+        } catch (err) {
+          showToast(handleAuthExpiry() ? '' : (err.message || 'Could not update it'));
+          btn.disabled = false;
+        }
+      });
+    });
+
+    notifAdminList.querySelectorAll('[data-notif-delete]').forEach(function (btn) {
+      btn.addEventListener('click', async function () {
+        btn.disabled = true;
+        try {
+          await api.request('/api/notifications/' + encodeURIComponent(btn.getAttribute('data-notif-delete')), {
+            method: 'DELETE',
+            headers: { Authorization: 'Bearer ' + adminToken }
+          });
+          showToast('Notification deleted');
+          await loadAdminNotifications();
+        } catch (err) {
+          showToast(handleAuthExpiry() ? '' : (err.message || 'Could not delete it'));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  /* ---------- Announcements: compose ---------- */
+  const notifCompose = document.getElementById('notifCompose');
+  if (notifCompose) {
+    notifCompose.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const title = document.getElementById('notifTitle').value.trim();
+      const body = document.getElementById('notifBody').value.trim();
+      const type = document.getElementById('notifType').value;
+
+      if (!title) { showToast('Give the notification a title first'); return; }
+
+      const submitBtn = notifCompose.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        await api.request('/api/notifications', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + adminToken },
+          body: JSON.stringify({ title: title, body: body, type: type })
+        });
+        showToast('Published — visitors can see it now');
+        notifCompose.reset();
+        await loadAdminNotifications();
+        fetchPublicNotifications();
+      } catch (err) {
+        showToast(handleAuthExpiry() ? '' : (err.message || 'Could not publish it'));
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  /* ---------- Auth expiry helper ---------- */
+  function handleAuthExpiry() {
+    if (adminToken && adminOverlay && adminOverlay.classList.contains('is-open')) {
+      adminToken = null;
+      try { sessionStorage.removeItem('ks_admin_token'); } catch (err) { /* ignore */ }
+      showLogin();
+      adminError('Session expired. Please sign in again.');
+      return true;
+    }
+    return false;
+  }
+
   const adminRefresh = document.getElementById('adminRefresh');
-  if (adminRefresh) adminRefresh.addEventListener('click', function () { loadMessages(); });
+  if (adminRefresh) adminRefresh.addEventListener('click', function () {
+    if (adminTab === 'announcements') loadAdminNotifications(); else loadMessages();
+  });
 
   const adminLogout = document.getElementById('adminLogout');
   if (adminLogout) adminLogout.addEventListener('click', function () {
@@ -2120,6 +2524,172 @@
       }
     });
   }
+
+  /* ============================================================
+     CERTIFICATES REEL + LIGHTBOX
+     ============================================================ */
+  const CERTIFICATES = [
+    { src: 'assets/certificates/full-stack-development.jpeg', title: 'Full Stack Development' },
+    { src: 'assets/certificates/ai-business-professionals.jpeg', title: 'AI for Business Professionals' },
+    { src: 'assets/certificates/data-transformation-google-cloud.jpeg', title: 'Data Transformation with Google Cloud' },
+    { src: 'assets/certificates/data-engineering-bigdata.jpeg', title: 'Data Engineering & Big Data' },
+    { src: 'assets/certificates/large-language-models.jpeg', title: 'Large Language Models' },
+    { src: 'assets/certificates/power-bi.jpeg', title: 'Power BI' },
+    { src: 'assets/certificates/internship-rise-tamizhan.jpeg', title: 'RISE Internship — Tamizhan Skills' },
+    { src: 'assets/certificates/project-expo.jpeg', title: 'Project Expo' }
+  ];
+
+  const certCard = (cert, ariaHidden) =>
+    '<figure class="cert-card" data-cert="' + esc(cert.src) + '"' + (ariaHidden ? ' aria-hidden="true"' : ' tabindex="0" role="button" aria-label="Open certificate: ' + esc(cert.title) + '"') + '>' +
+      '<img src="' + esc(cert.src) + '" alt="' + esc('Certificate — ' + cert.title) + '" loading="lazy" draggable="false" />' +
+      '<figcaption><p>' + esc(cert.title) + '</p>' +
+        '<span class="cert-view"><svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg></span>' +
+      '</figcaption>' +
+    '</figure>';
+
+  document.querySelectorAll('[data-cert-set]').forEach(function (set, index) {
+    set.innerHTML = CERTIFICATES.map(function (c) { return certCard(c, index === 1); }).join('');
+  });
+
+  const lightbox = document.getElementById('lightbox');
+  const lbImage = document.getElementById('lbImage');
+  const lbCaption = document.getElementById('lbCaption');
+  const lbCounter = document.getElementById('lbCounter');
+  let lbIndex = 0;
+  let lbOpen = false;
+
+  function showCert(index) {
+    lbIndex = (index + CERTIFICATES.length) % CERTIFICATES.length;
+    const cert = CERTIFICATES[lbIndex];
+    lbImage.src = cert.src;
+    lbImage.alt = 'Certificate — ' + cert.title;
+    lbCaption.textContent = cert.title;
+    lbCounter.textContent = (lbIndex + 1) + ' / ' + CERTIFICATES.length;
+  }
+
+  function openLightbox(index) {
+    if (!lightbox) return;
+    showCert(index);
+    lbOpen = true;
+    lightbox.hidden = false;
+    window.requestAnimationFrame(function () { lightbox.classList.add('is-open'); });
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lbOpen = false;
+    lightbox.classList.remove('is-open');
+    document.body.style.overflow = '';
+    window.setTimeout(function () { lightbox.hidden = true; }, 300);
+  }
+
+  document.querySelectorAll('.cert-card').forEach(function (card) {
+    card.addEventListener('click', function () {
+      const target = card.getAttribute('data-cert');
+      const index = CERTIFICATES.findIndex(function (c) { return c.src === target; });
+      openLightbox(index >= 0 ? index : 0);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+    });
+  });
+
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  const lbClose = document.getElementById('lbClose');
+  if (lbPrev) lbPrev.addEventListener('click', function () { showCert(lbIndex - 1); });
+  if (lbNext) lbNext.addEventListener('click', function () { showCert(lbIndex + 1); });
+  if (lbClose) lbClose.addEventListener('click', closeLightbox);
+  if (lightbox) {
+    lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lbOpen) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showCert(lbIndex - 1);
+      if (e.key === 'ArrowRight') showCert(lbIndex + 1);
+    });
+  }
+
+  /* ============================================================
+     NOTIFICATIONS — the bell every visitor sees, fed by the admin portal
+     ============================================================ */
+  const notifToggle = document.getElementById('notifToggle');
+  const notifPanel = document.getElementById('notifPanel');
+  const notifDot = document.getElementById('notifDot');
+  const notifList = document.getElementById('notifList');
+  let latestNotifId = null;
+
+  function setNotifDot(on) {
+    notifDot.classList.toggle('hidden', !on);
+  }
+
+  async function fetchPublicNotifications() {
+    try {
+      const data = await api.request('/api/notifications');
+      const items = (data && data.notifications) || [];
+      setNotifDot(items.length > 0);
+      if (!items.length) return items;
+
+      if (items[0].id !== latestNotifId && latestNotifId !== null && !notifPanel.classList.contains('is-open')) {
+        showToast(items[0].title);
+      }
+      latestNotifId = items[0].id;
+
+      if (notifPanel.classList.contains('is-open') || notifPanel.dataset.loaded !== '1') {
+        renderPublicNotifications(items);
+      }
+      return items;
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function renderPublicNotifications(items) {
+    notifPanel.dataset.loaded = '1';
+    if (!items.length) {
+      notifList.innerHTML = '<p class="py-2 text-center text-xs text-zinc-500">No notifications right now.</p>';
+      return;
+    }
+    notifList.innerHTML = items.map(function (n) {
+      const body = n.body ? '<p class="notif-body">' + esc(n.body) + '</p>' : '';
+      return '<article class="notif-item">' +
+        '<div class="notif-title"><span class="notif-type notif-type-' + esc(n.type) + '">' + esc(n.type) + '</span><span class="min-w-0 truncate">' + esc(n.title) + '</span></div>' +
+        body +
+        '<time>' + esc(formatDate(n.createdAt)) + '</time>' +
+      '</article>';
+    }).join('');
+  }
+
+  function toggleNotifPanel(open) {
+    const willOpen = open === undefined ? notifPanel.classList.contains('hidden') : open;
+    if (willOpen) {
+      notifPanel.classList.remove('hidden');
+      window.requestAnimationFrame(function () { notifPanel.classList.add('is-open'); });
+      notifToggle.setAttribute('aria-expanded', 'true');
+      latestNotifId = null; // opening counts as "seen", silence the toast
+      fetchPublicNotifications();
+    } else {
+      notifPanel.classList.remove('is-open');
+      notifToggle.setAttribute('aria-expanded', 'false');
+      window.setTimeout(function () { notifPanel.classList.add('hidden'); }, 280);
+    }
+  }
+
+  if (notifToggle) {
+    notifToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleNotifPanel();
+    });
+    document.addEventListener('click', function (e) {
+      if (!notifPanel.classList.contains('hidden') && !notifPanel.contains(e.target)) {
+        toggleNotifPanel(false);
+      }
+    });
+  }
+
+  fetchPublicNotifications();
+  window.setInterval(fetchPublicNotifications, 90 * 1000);
 
   /* ---------- Resume links: graceful fallback when the PDF is not uploaded ---------- */
   document.querySelectorAll('[data-resume]').forEach(function (link) {
